@@ -14,7 +14,7 @@ on:
 jobs:
     test-job:
   
-        runs-on: ubunu-latest
+        runs-on: ubuntu-latest
              
         steps:
         - name: Clone Source Code
