@@ -3,7 +3,7 @@ name: pipeline CI/CD Backend-api
 
 
 env:
-    IMAGE_NAME: backend-api
+    IMAGE_NAME: backend-s8-image
     BUILD_NUMBER: ${{github.run_number}}
 
 on:
