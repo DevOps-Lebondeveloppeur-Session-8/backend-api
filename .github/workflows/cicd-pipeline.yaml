@@ -45,37 +45,37 @@ jobs:
 
       - name: Install Dependency Scanning tool (snyk)  
         run: npm install -g snyk
-       
+        
       - name: Snyk Authentication
         run: snyk auth ${{ secrets.SNYK_TOKEN }}
 
       - name: Run snyk vulenrability Scan
         run: snyk test
-  
 
 
-  trivy-image-security-scan-job:
-    runs-on: ubuntu-latest
-    needs: [snyk-code-security-scan-job]
 
-    steps:
-      - name: Checkout Code
-        uses: actions/checkout@v4
+    trivy-image-security-scan-job:
+      runs-on: ubuntu-latest
+      needs: [snyk-code-security-scan-job]
 
-      - name: Install dependencies
-        run: sudo apt-get update && sudo apt-get install -y curl
+      steps:
+        - name: Checkout Code
+          uses: actions/checkout@v4
 
-      - name: Download and install Trivy
-        run: |
-          curl -sSL https://github.com/aquasecurity/trivy/releases/download/v0.29.0/trivy_0.29.0_Linux-64bit.tar.gz -o trivy.tar.gz
-          tar xzvf trivy.tar.gz
-          sudo mv trivy /usr/local/bin/
-          trivy --version
-      - name: Run trivy docker image vulnerability scan
-        run: |
-          docker build -t ${{ env.IMAGE_NAME }} .
-          trivy image ${{ env.IMAGE_NAME }} 
-      
+        - name: Install dependencies
+          run: sudo apt-get update && sudo apt-get install -y curl
+
+        - name: Download and install Trivy
+          run: |
+            curl -sSL https://github.com/aquasecurity/trivy/releases/download/v0.29.0/trivy_0.29.0_Linux-64bit.tar.gz -o trivy.tar.gz
+            tar xzvf trivy.tar.gz
+            sudo mv trivy /usr/local/bin/
+            trivy --version
+        - name: Run trivy docker image vulnerability scan
+          run: |
+            docker build -t ${{ env.IMAGE_NAME }} .
+            trivy image ${{ env.IMAGE_NAME }} 
+        
 
     build-and-push-job:
         runs-on: ubuntu-latest
