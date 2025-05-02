@@ -2,6 +2,8 @@ name: pipeline CI/CD Backend-api
 
 
 
+
+
 env:
     IMAGE_NAME: backend-s8-image
     BUILD_NUMBER: ${{github.run_number}}
@@ -31,6 +33,29 @@ jobs:
         - name: Run unit Tests
           run: npm test
     
+
+
+
+    snyk-code-security-scan-job:
+      runs-on: ubuntu-latest
+      needs: [test-job]
+      steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Install Dependency Scanning tool (snyk)  
+        run: npm install -g snyk
+       
+      - name: Snyk Authentication
+        run: snyk auth ${{ secrets.SNYK_TOKEN }}
+
+      - name: Run snyk vulenrability Scan
+        run: snyk test
+        
+      
+
+
+
     build-and-push-job:
         runs-on: ubuntu-latest
         needs: test-job 
@@ -59,6 +84,12 @@ jobs:
 
             - name: Push Docker image with latest version
               run: docker push ${{  secrets.DOCKERHUB_USERNAME }}/${{ env.IMAGE_NAME }}:latest 
+    
+
+  
+
+    
+              
 
 
     deploy-job:
@@ -76,6 +107,7 @@ jobs:
                 git pull
                 sudo docker-compose pull
                 sudo docker-compose up -d --force-recreate --remove-orphans
+
 
 
 
